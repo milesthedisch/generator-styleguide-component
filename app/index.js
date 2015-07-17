@@ -18,15 +18,15 @@ var StylguideComponent = module.exports = generators.Base.extend({
     },
 
     createComponent: function () {
-        this.mkdir('scss/components/' + componentName);
-        this.write('scss/components/' + componentName + '/_' + componentName + '.scss' ,
+        this.mkdir(componentName);
+        this.write(componentName + '/_' + componentName + '.scss' ,
             '// ' + componentName.charAt(0).toUpperCase() + componentName.slice(1) + '\n'+
             '//\n' +
             '// Markup: ' + componentName + '.html\n' +
             '//\n' +
             '// Styleguide components.' + componentName
         );
-        this.write('scss/components/' + componentName + '/' + componentName + '.html', "");
+        this.write(componentName + '/' + componentName + '.html', "");
     }
 
 });
