@@ -1,8 +1,20 @@
 var generators = require('yeoman-generator');
 var fs = require('fs');
 var path = require('path');
+var component = {
+    name: function(name) {
+        return name.replace(/[|&;$%@"<>()+,]/g, "").trim();
+    },
+    title: function(name) {
+        return this.name(name).replace(/\b./g, function(m){ return m.toUpperCase(); });
+    },
+    machineName: function(name) {
+        return this.name(name).replace(/\s/g, "-");
+    },
+    answers: {}
+}
 
-var StylguideComponent = module.exports = generators.Base.extend({
+var Stylguidecomponent = module.exports = generators.Base.extend({
 
     prompting: function() {
         var done = this.async();
@@ -14,9 +26,13 @@ var StylguideComponent = module.exports = generators.Base.extend({
         },
         function (answers) {
 
-            this.mkdir(Component(answers.name).machineName);
-            this.write(Component(answers.name).machineName + '/_' + Component(answers.name).machineName + '.scss' , makeScssFile(answers.name));
-            this.write(Component(answers.name).machineName + '/' + Component(answers.name).machineName + '.html', "");
+            component.answers = answers;
+
+            var machineName = component.machineName(answers.name);
+
+            this.mkdir(machineName);
+            this.write(machineName + '/_' + machineName + '.scss' , makeScssFile(answers.name));
+            this.write(machineName + '/' + machineName + '.html', "");
 
             done();
 
@@ -26,34 +42,25 @@ var StylguideComponent = module.exports = generators.Base.extend({
         var done = this.async();
         this.prompt({
             type    : 'confirm',
-            name    : 'name',
+            name    : 'js',
             message : 'Do you have a jsFile?',
             default : false
         },
         function (answers) {
-             if(answers.name == true) {
-                this.write(Component(answers.name).machineName + '/' + Component(answers.name).machineName + '.js', "");
+            var machineName = component.machineName(component.answers.name);
+            console.log(machineName);
+             if(answers.js) {
+                 this.write(machineName + '/_' + machineName + '.js', "asdf");
              }
             done();
         }.bind(this));
     }
 });
 
-function Component(name) {
-    // clean string
-    name = name.replace(/[|&;$%@"<>()+,]/g, "").trim();
-
-    return {
-        // First Letter of every word is capitalized
-        title: name.replace(/\b./g, function(m){ return m.toUpperCase(); }),
-        machineName: name.replace(/\s/g, "-")
-    }
-}
-
 function makeScssFile(name) {
-    return  '// ' + Component(name).title + '\n' +
+    return  '// ' + component.title(name) + '\n' +
             '//\n' +
-            '// Markup: ' + Component(name).machineName + '.html\n' +
+            '// Markup: ' + component.machineName(name) + '.html\n' +
             '//\n' +
-            '// Styleguide components.' + Component(name).machineName;
+            '// Styleguide components.' + component.machineName(name);
 }
