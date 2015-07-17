@@ -9,7 +9,7 @@ var StylguideComponent = module.exports = generators.Base.extend({
         this.prompt({
             type    : 'input',
             name    : 'name',
-            message : 'Your component name',
+            message : 'Your component name i.e. "layout narrow"',
             default : this.appname // Default to current folder name
         }, function (answers) {
             this.log(componentName = answers.name);
@@ -18,15 +18,18 @@ var StylguideComponent = module.exports = generators.Base.extend({
     },
 
     createComponent: function () {
-        this.mkdir(componentName);
-        this.write(componentName + '/_' + componentName + '.scss' ,
-            '// ' + componentName.charAt(0).toUpperCase() + componentName.slice(1) + '\n'+
+        var componentNameMachine = componentName.replace(/\s/g, "-");
+        var componentNameHuman = componentName;
+        
+        this.mkdir(componentNameMachine);
+        this.write(componentNameMachine + '/_' + componentNameMachine + '.scss' ,
+            '// ' + componentNameHuman.charAt(0).toUpperCase() + componentNameHuman.slice(1) + '\n'+
             '//\n' +
-            '// Markup: ' + componentName + '.html\n' +
+            '// Markup: ' + componentNameMachine + '.html\n' +
             '//\n' +
-            '// Styleguide components.' + componentName
+            '// Styleguide components.' + componentNameMachine
         );
-        this.write(componentName + '/' + componentName + '.html', "");
+        this.write(componentNameMachine + '/' + componentNameMachine + '.html', "");
     }
 
 });
