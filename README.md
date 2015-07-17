@@ -17,7 +17,7 @@ $ yo --help
 After you run this command you should see generator-styldeguide-component.
 
 ```
-generator-styldeguide-component
+styldeguide-component
 ```
 Then name your component.
 
