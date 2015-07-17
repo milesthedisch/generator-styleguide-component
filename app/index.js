@@ -1,6 +1,6 @@
 var componentName;
 var generators = require('yeoman-generator');
-var fs = require('fs')
+var fs = require('fs');
 
 var StylguideComponent = module.exports = generators.Base.extend({
 
