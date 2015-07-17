@@ -2,6 +2,23 @@
   "name": "generator-styleguide-component",
   "version": "0.1.0",
   "description": "",
+  "author": {
+    "name": "The Disch Team"
+  },
+  "_npmUser": {
+    "name": "milesthedisch",
+    "email": "milesthedisch@gmail.com"
+  },
+  "maintainers": [
+    {
+      "name": "jordanddisch",
+      "email": "jordanddisch@gmail.com"
+    },
+    {
+      "name": "robertcarcaus",
+      "email": "rcaracaus@gmail.com"
+    }
+  ],
   "files": [
     "app"
   ],
