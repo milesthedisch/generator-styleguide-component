@@ -17,10 +17,10 @@ $ yo --help
 After you run this command you should see generator-styldeguide-component.
 
 ```
-styldeguide-component
+yo styldeguide-component
 ```
 Then name your component.
 
 ie. purple pimps.
 
-Badabing Badaboom!
+Badabing Badaboom and you have a styleguide component.
