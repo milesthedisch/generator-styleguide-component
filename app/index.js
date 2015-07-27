@@ -11,12 +11,18 @@ var component = {
     machineName: function(name) {
         return this.name(name).replace(/\s/g, "-");
     },
-    answers: {}
+    subComponents: function(name) {
+        //leaves commas but strips all other special characters
+        return name.replace(/[^A-Z0-9-,]/ig, "").split(',');
+    },
+    answers: {
+        subComponentNames: ''
+    }
 };
 
 var Stylguidecomponent = module.exports = generators.Base.extend({
 
-    prompting: function() {
+    getNamePrompt: function() {
         var done = this.async();
         this.prompt({
             type    : 'input',
@@ -31,7 +37,30 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
 
         }.bind(this));
     },
-    prompting2: function() {
+    getSubComponentsPrompt: function() {
+        var done = this.async();
+        this.prompt([{
+            type    : 'confirm',
+            name    : 'subComponents',
+            message : 'Do you have any sub-component(s)?',
+            default : false
+        },
+        {
+            when: function(response) {
+                return response.subComponents;
+            },
+            type    : 'input',
+            name    : 'subComponentNames',
+            message : 'Input the sub-components',
+            default : ''
+        }],
+        function(answers) {
+            component.answers.subComponentNames = component.subComponents(answers.subComponentNames);
+            done();
+        });
+    },
+    jsFilePrompt: function() {
+        console.log(component.answers);
         var done = this.async();
         this.prompt({
             type    : 'confirm',
@@ -59,10 +88,12 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
         function (reply) {
             var machineName = component.machineName(answers.name);
             var name = component.title(answers.name);
+            var subComponents = component.answers.subComponentNames;
 
             this.template('styles.tpl.scss', machineName + '/_' + machineName + '.scss', {
                 name: name,
-                machineName: machineName
+                machineName: machineName,
+                subComponents: subComponents
             });
             this.template('index.tpl.html', machineName + '/' + machineName + '.html', {
                 name: name,
