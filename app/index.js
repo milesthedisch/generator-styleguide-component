@@ -12,7 +12,7 @@ var component = {
         return this.name(name).replace(/\s/g, "-");
     },
     answers: {}
-}
+};
 
 var Stylguidecomponent = module.exports = generators.Base.extend({
 
@@ -27,13 +27,6 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
         function (answers) {
 
             component.answers = answers;
-
-            var machineName = component.machineName(answers.name);
-
-            this.mkdir(machineName);
-            this.write(machineName + '/_' + machineName + '.scss' , makeScssFile(answers.name));
-            this.write(machineName + '/' + machineName + '.html', "");
-
             done();
 
         }.bind(this));
@@ -69,13 +62,21 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
                 }
                 done();
             }.bind(this));
+    },
+    generateComponent: function() {
+        var done = this.async();
+        var answers = component.answers;
+        var machineName = component.machineName(answers.name);
+        var name = component.title(answers.name);
+
+        this.template('styles.tpl.scss', machineName + '/_' + machineName + '.scss', {
+            name: name,
+            machineName: machineName
+        });
+        this.template('index.tpl.html', machineName + '/' + machineName + '.html', {
+            name: name,
+            machineName: machineName
+        });
+        done();
     }
 });
-
-function makeScssFile(name) {
-    return  '// ' + component.title(name) + '\n' +
-            '//\n' +
-            '// Markup: ' + component.machineName(name) + '.html\n' +
-            '//\n' +
-            '// Styleguide components.' + component.machineName(name);
-}
