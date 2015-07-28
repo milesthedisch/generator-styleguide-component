@@ -42,10 +42,26 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
         function (answers) {
             var machineName = component.machineName(component.answers.name);
              if(answers.js) {
-                 this.write(machineName + '/_' + machineName + '.js', "asdf");
+                 this.write(machineName + '/_' + machineName + '.js', "");
              }
             done();
         }.bind(this));
+    },
+    prompting3: function() {
+        var done = this.async();
+        this.prompt({
+                type    : 'confirm',
+                name    : 'json',
+                message : 'Do you have a json file?',
+                default : false
+            },
+            function (answers) {
+                var machineName = component.machineName(component.answers.name);
+                if(answers.json) {
+                    this.write(machineName + '/_' + machineName + '.json', "");
+                }
+                done();
+            }.bind(this));
     },
     generateComponent: function() {
         var done = this.async();
