@@ -2,16 +2,16 @@ var generators = require('yeoman-generator');
 var fs = require('fs');
 var path = require('path');
 var component = {
-    name: function(name) {
+    trimString: function(name) {
         return name.replace(/[|&;$%@"<>()+,]/g, "").trim();
     },
-    title: function(name) {
-        return this.name(name).replace(/\b./g, function(m){ return m.toUpperCase(); });
+    capitalizeString: function(name) {
+        return this.trimString(name).replace(/\b./g, function(m){ return m.toUpperCase(); });
     },
-    machineName: function(name) {
-        return this.name(name).replace(/\s/g, "-");
+    addDash: function(name) {
+        return this.trimString(name).replace(/\s/g, "-");
     },
-    stringSplit: function(name) {
+    splitString: function(name) {
         //leaves commas but strips all other special characters
         return name.replace(/[^A-Z0-9-,]/ig, "").split(',');
     },
@@ -56,7 +56,7 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
             default : ''
         }],
         function(answers) {
-            component.answers.subComponentNames = component.stringSplit(answers.subComponentNames);
+            component.answers.subComponentNames = component.splitString(answers.subComponentNames);
             done();
         });
     },
@@ -78,7 +78,7 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
             default : ''
         }],
         function(answers) {
-            component.answers.modifierNames = component.stringSplit(answers.modifierNames);
+            component.answers.modifierNames = component.splitString(answers.modifierNames);
             done();
         });
     },
@@ -91,7 +91,7 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
             default : false
         },
         function (answers) {
-            var machineName = component.machineName(component.answers.name);
+            var machineName = component.addDash(component.answers.name);
              if(answers.js) {
                  this.write(machineName + '/_' + machineName + '.js', "");
              }
@@ -107,7 +107,7 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
                 default : false
             },
             function (answers) {
-                var machineName = component.machineName(component.answers.name);
+                var machineName = component.addDash(component.answers.name);
                 if(answers.json) {
                     this.write(machineName + '/_' + machineName + '.json', "");
                 }
@@ -118,8 +118,8 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
         var done = this.async();
         var answers = component.answers;
 
-        var machineName = component.machineName(answers.name);
-        var name = component.title(answers.name);
+        var machineName = component.addDash(answers.name);
+        var name = component.capitalizeString(answers.name);
         var subComponents = component.answers.subComponentNames;
         var modifiers = component.answers.modifierNames;
 
