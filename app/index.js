@@ -11,12 +11,13 @@ var component = {
     machineName: function(name) {
         return this.name(name).replace(/\s/g, "-");
     },
-    subComponents: function(name) {
+    stringSplit: function(name) {
         //leaves commas but strips all other special characters
         return name.replace(/[^A-Z0-9-,]/ig, "").split(',');
     },
     answers: {
-        subComponentNames: ''
+        subComponentNames: '',
+        modifierNames: ''
     }
 };
 
@@ -55,12 +56,33 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
             default : ''
         }],
         function(answers) {
-            component.answers.subComponentNames = component.subComponents(answers.subComponentNames);
+            component.answers.subComponentNames = component.stringSplit(answers.subComponentNames);
+            done();
+        });
+    },
+    getModifiersPrompt: function() {
+        var done = this.async();
+        this.prompt([{
+            type    : 'confirm',
+            name    : 'modifiers',
+            message : 'Do you have a modifier(s)?',
+            default : false
+        },
+        {
+            when: function(response) {
+                return response.modifiers;
+            },
+            type    : 'input',
+            name    : 'modifierNames',
+            message : 'Input the modifiers',
+            default : ''
+        }],
+        function(answers) {
+            component.answers.modifierNames = component.stringSplit(answers.modifierNames);
             done();
         });
     },
     jsFilePrompt: function() {
-        console.log(component.answers);
         var done = this.async();
         this.prompt({
             type    : 'confirm',
@@ -89,11 +111,13 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
             var machineName = component.machineName(answers.name);
             var name = component.title(answers.name);
             var subComponents = component.answers.subComponentNames;
+            var modifiers = component.answers.modifierNames;
 
             this.template('styles.tpl.scss', machineName + '/_' + machineName + '.scss', {
                 name: name,
                 machineName: machineName,
-                subComponents: subComponents
+                subComponents: subComponents,
+                modifiers: modifiers
             });
             this.template('index.tpl.html', machineName + '/' + machineName + '.html', {
                 name: name,
