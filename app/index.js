@@ -93,37 +93,46 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
         function (answers) {
             var machineName = component.machineName(component.answers.name);
              if(answers.js) {
-                 this.write(machineName + '/_' + machineName + '.js', "asdf");
+                 this.write(machineName + '/_' + machineName + '.js', "");
              }
             done();
         }.bind(this));
     },
+    jsonFilePrompt: function() {
+        var done = this.async();
+        this.prompt({
+                type    : 'confirm',
+                name    : 'json',
+                message : 'Do you have a json file?',
+                default : false
+            },
+            function (answers) {
+                var machineName = component.machineName(component.answers.name);
+                if(answers.json) {
+                    this.write(machineName + '/_' + machineName + '.json', "");
+                }
+                done();
+            }.bind(this));
+    },
     generateComponent: function() {
         var done = this.async();
         var answers = component.answers;
-        this.prompt({
-            type    : 'confirm',
-            name    : 'generate',
-            message : 'Do you wish to generate component: ' + answers.name + '?',
-            default : false
-        },
-        function (reply) {
-            var machineName = component.machineName(answers.name);
-            var name = component.title(answers.name);
-            var subComponents = component.answers.subComponentNames;
-            var modifiers = component.answers.modifierNames;
 
-            this.template('styles.tpl.scss', machineName + '/_' + machineName + '.scss', {
-                name: name,
-                machineName: machineName,
-                subComponents: subComponents,
-                modifiers: modifiers
-            });
-            this.template('index.tpl.html', machineName + '/' + machineName + '.html', {
-                name: name,
-                machineName: machineName
-            });
-            done();
-        }.bind(this));
+        var machineName = component.machineName(answers.name);
+        var name = component.title(answers.name);
+        var subComponents = component.answers.subComponentNames;
+        var modifiers = component.answers.modifierNames;
+
+        this.template('styles.tpl.scss', machineName + '/_' + machineName + '.scss', {
+            name: name,
+            machineName: machineName,
+            subComponents: subComponents,
+            modifiers: modifiers
+        });
+        this.template('index.tpl.html', machineName + '/' + machineName + '.html', {
+            name: name,
+            machineName: machineName
+        });
+        done();
     }
 });
