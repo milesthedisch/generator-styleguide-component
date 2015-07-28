@@ -60,7 +60,6 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
         });
     },
     jsFilePrompt: function() {
-        console.log(component.answers);
         var done = this.async();
         this.prompt({
             type    : 'confirm',
