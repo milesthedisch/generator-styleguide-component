@@ -2,21 +2,27 @@ var generators = require('yeoman-generator');
 var fs = require('fs');
 var path = require('path');
 var component = {
-    name: function(name) {
+    trimString: function(name) {
         return name.replace(/[|&;$%@"<>()+,]/g, "").trim();
     },
-    title: function(name) {
-        return this.name(name).replace(/\b./g, function(m){ return m.toUpperCase(); });
+    capitalizeString: function(name) {
+        return this.trimString(name).replace(/\b./g, function(m){ return m.toUpperCase(); });
     },
-    machineName: function(name) {
-        return this.name(name).replace(/\s/g, "-");
+    addDash: function(name) {
+        return this.trimString(name).replace(/\s/g, "-");
     },
-    answers: {}
+    splitString: function(name) {
+        //leaves commas but strips all other special characters
+        return name.replace(/[^A-Z0-9-,]/ig, "").split(',');
+    },
+    answers: {
+        subComponentNames: ''
+    }
 };
 
-var Stylguidecomponent = module.exports = generators.Base.extend({
+var StylguideComponent = module.exports = generators.Base.extend({
 
-    prompting: function() {
+    getNamePrompt: function() {
         var done = this.async();
         this.prompt({
             type    : 'input',
@@ -31,7 +37,29 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
 
         }.bind(this));
     },
-    prompting2: function() {
+    getSubComponentsPrompt: function() {
+        var done = this.async();
+        this.prompt([{
+            type    : 'confirm',
+            name    : 'subComponents',
+            message : 'Do you have any sub-component(s)?',
+            default : false
+        },
+        {
+            when: function(response) {
+                return response.subComponents;
+            },
+            type    : 'input',
+            name    : 'subComponentNames',
+            message : 'Input the sub-components',
+            default : ''
+        }],
+        function(answers) {
+            component.answers.subComponentNames = component.splitString(answers.subComponentNames);
+            done();
+        });
+    },
+    jsFilePrompt: function() {
         var done = this.async();
         this.prompt({
             type    : 'confirm',
@@ -40,14 +68,14 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
             default : false
         },
         function (answers) {
-            var machineName = component.machineName(component.answers.name);
+            var machineName = component.addDash(component.answers.name);
              if(answers.js) {
                  this.write(machineName + '/_' + machineName + '.js', "");
              }
             done();
         }.bind(this));
     },
-    prompting3: function() {
+    jsonFilePrompt: function() {
         var done = this.async();
         this.prompt({
                 type    : 'confirm',
@@ -56,7 +84,7 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
                 default : false
             },
             function (answers) {
-                var machineName = component.machineName(component.answers.name);
+                var machineName = component.addDash(component.answers.name);
                 if(answers.json) {
                     this.write(machineName + '/_' + machineName + '.json', "");
                 }
@@ -66,12 +94,15 @@ var Stylguidecomponent = module.exports = generators.Base.extend({
     generateComponent: function() {
         var done = this.async();
         var answers = component.answers;
-        var machineName = component.machineName(answers.name);
-        var name = component.title(answers.name);
+
+        var machineName = component.addDash(answers.name);
+        var name = component.capitalizeString(answers.name);
+        var subComponents = component.answers.subComponentNames;
 
         this.template('styles.tpl.scss', machineName + '/_' + machineName + '.scss', {
             name: name,
-            machineName: machineName
+            machineName: machineName,
+            subComponents: subComponents
         });
         this.template('index.tpl.html', machineName + '/' + machineName + '.html', {
             name: name,
