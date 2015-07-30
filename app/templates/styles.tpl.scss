@@ -3,3 +3,14 @@
 // Markup: <%= machineName %>.html
 //
 // Styleguide component.<%= machineName %>
+
+<%= '.' + machineName %>,
+<%= '%' + machineName %> {
+
+}
+<% for(var i=0; i < subComponents.length; i++) { %>
+<%= '.' + machineName %><%= '__' + subComponents[i] %>,
+<%= '%' + machineName %><%= '__' + subComponents[i] %> {
+
+}
+<% } %>
