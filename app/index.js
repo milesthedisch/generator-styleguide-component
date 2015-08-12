@@ -16,7 +16,8 @@ var component = {
         return name.replace(/[^A-Z0-9-,]/ig, "").split(',');
     },
     answers: {
-        subComponentNames: ''
+        subComponentNames: '',
+        modifierNames: ''
     }
 };
 
@@ -59,6 +60,28 @@ var StylguideComponent = module.exports = generators.Base.extend({
             done();
         });
     },
+    getModifiersPrompt: function() {
+        var done = this.async();
+        this.prompt([{
+            type    : 'confirm',
+            name    : 'modifiers',
+            message : 'Do you have a modifier(s)?',
+            default : false
+        },
+        {
+            when: function(response) {
+                return response.modifiers;
+            },
+            type    : 'input',
+            name    : 'modifierNames',
+            message : 'Input the modifiers',
+            default : ''
+        }],
+        function(answers) {
+            component.answers.modifierNames = component.splitString(answers.modifierNames);
+            done();
+        });
+    },
     jsFilePrompt: function() {
         var done = this.async();
         this.prompt({
@@ -98,11 +121,13 @@ var StylguideComponent = module.exports = generators.Base.extend({
         var machineName = component.addDash(answers.name);
         var name = component.capitalizeString(answers.name);
         var subComponents = component.answers.subComponentNames;
+        var modifiers = component.answers.modifierNames;
 
         this.template('styles.tpl.scss', machineName + '/_' + machineName + '.scss', {
             name: name,
             machineName: machineName,
-            subComponents: subComponents
+            subComponents: subComponents,
+            modifiers: modifiers
         });
         this.template('index.tpl.html', machineName + '/' + machineName + '.html', {
             name: name,
